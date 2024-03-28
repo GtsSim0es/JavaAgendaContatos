@@ -3,10 +3,11 @@ package Core.Services;
 import Core.Entities.Contato;
 import Core.Entities.Telefone;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AgendaService {
-    private List<Contato> listaDeContatos;
+    private List<Contato> listaDeContatos = new ArrayList<>();
 
     public void CriarContato(Contato novoContato){
         listaDeContatos.add(novoContato);
