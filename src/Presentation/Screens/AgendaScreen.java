@@ -1,4 +1,4 @@
-package Presentation;
+package Presentation.Screens;
 
 import Core.Entities.Contato;
 import Core.Entities.Endereco;
@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-
 
 public class AgendaScreen extends JFrame {
     private JTable tabela;
@@ -32,7 +31,13 @@ public class AgendaScreen extends JFrame {
         definirConfiguracoesDeMenu();
     }
     private void definirConfiguracoesDeTabela(){
-        model = new DefaultTableModel();
+        model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         model.addColumn("Codigo");
         model.addColumn("Nome");
 
@@ -46,9 +51,11 @@ public class AgendaScreen extends JFrame {
         nomeField = new JTextField(15);
         JButton adicionarButton = new JButton("Adicionar");
         JButton excluirButton = new JButton("Excluir");
+        JButton verContatoButton = new JButton("Ver Contato");
 
         adicionarButton.addActionListener(this::adicionarLinha);
         excluirButton.addActionListener(this::excluirLinha);
+        verContatoButton.addActionListener(this::verContato);
 
         botoesPanel.add(new JLabel("Codigo:"));
         botoesPanel.add(codigoField);
@@ -58,39 +65,70 @@ public class AgendaScreen extends JFrame {
 
         botoesPanel.add(adicionarButton);
         botoesPanel.add(excluirButton);
+        botoesPanel.add(verContatoButton);
 
         getContentPane().add(botoesPanel, BorderLayout.SOUTH);
     }
 
     private void adicionarLinha(ActionEvent e) {
-        long codigo = Long.parseLong(codigoField.getText());
-        String nome = nomeField.getText();
+        try {
+            long codigo = Long.parseLong(codigoField.getText());
+            String nome = nomeField.getText();
 
-        if (!nome.isEmpty() && codigo != 0) {
-            Contato novoContato = new Contato(codigo, nome, new Endereco());
-            agendaService.CriarContato(novoContato);
-        } else {
-            JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
+            if (!nome.isEmpty() && codigo != 0) {
+                Contato novoContato = new Contato(codigo, nome, new Endereco());
+                agendaService.CriarContato(novoContato);
+            } else {
+                JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
+            }
+
+            preencherOuAtualizarTabela();
+        } catch (NumberFormatException ex) {
+            // Exibe um diálogo de erro informando que o campo "codigo" só pode conter números.
+            JOptionPane.showMessageDialog(this, "O campo \"Código\" só pode conter números.");
         }
-
-        preencherOuAtualizarTabela();
     }
     private void excluirLinha(ActionEvent e) {
         int linhaSelecionada = tabela.getSelectedRow();
         if (linhaSelecionada != -1) {
-            model.removeRow(linhaSelecionada);
+            long codigo = (long) model.getValueAt(linhaSelecionada, 0);
+            var contatoAtual = agendaService.ConsultarContato(codigo);
+
+            agendaService.ExcluirContato(contatoAtual);
+
+            preencherOuAtualizarTabela();
         } else {
             JOptionPane.showMessageDialog(this, "Selecione uma linha para excluir.");
         }
     }
+    private void verContato(ActionEvent e) {
+        int linhaSelecionada = tabela.getSelectedRow();
+        if (linhaSelecionada != -1) {
+            long codigo = (long) model.getValueAt(linhaSelecionada, 0);
+            var contatoAtual = agendaService.ConsultarContato(codigo);
+
+            SwingUtilities.invokeLater(() -> new ContatoDetalheScreen(contatoAtual));
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione uma linha para ver o contato.");
+        }
+    }
     private void preencherOuAtualizarTabela(){
+        model.setNumRows(0);
+
         var contatosLista = agendaService.BuscarListaContatosAgenda();
 
         for (Contato contato : contatosLista){
-
-            String[] novaLinha = {Long.toString(contato.getCodigo()), contato.getNome()};
-
-            model.addRow(novaLinha);
+            model.addRow(new Object[]{contato.getCodigo(), contato.getNome()});
         }
     }
+
+
+
+
+
 }
+
+
+
+

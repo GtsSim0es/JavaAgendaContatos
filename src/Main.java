@@ -1,5 +1,4 @@
-import Core.Services.AgendaService;
-import Presentation.*;
+import Presentation.Screens.AgendaScreen;
 
 import javax.swing.*;
 
