@@ -17,11 +17,9 @@ public class AgendaService {
 
         listaDeContatos.add(novoContato);
     }
-
     public void ExcluirContato(Contato contatoParaExcluir){
         listaDeContatos.remove(contatoParaExcluir);
     }
-
     public Contato ConsultarContato(long codigo){
         for (Contato contato : listaDeContatos) {
             if (contato.getCodigo() == codigo) {
@@ -31,7 +29,6 @@ public class AgendaService {
 
         return null;
     }
-
     public List<Contato> BuscarListaContatosAgenda(){
         return listaDeContatos;
     }

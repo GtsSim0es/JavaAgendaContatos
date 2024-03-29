@@ -23,7 +23,6 @@ public class ContatoDetalheScreen extends JFrame {
     private JTextField bairroField;
     private JTextField estadoField;
     private JTextField cepField;
-
     public ContatoDetalheScreen(Contato contato) {
         this.contato = contato;
         definirConfiguracoesDeJanela();
@@ -170,7 +169,7 @@ public class ContatoDetalheScreen extends JFrame {
     private void excluirLinha(ActionEvent e) {
         int linhaSelecionada = tabela.getSelectedRow();
         if (linhaSelecionada != -1) {
-            String numero = (String) model.getValueAt(linhaSelecionada, 2);
+            String numero = (String) model.getValueAt(linhaSelecionada, 1);
             var numeroAtual = contato.getTelefoneFromList(numero);
 
             contato.getListaTelefones().remove(numeroAtual);
@@ -199,7 +198,7 @@ public class ContatoDetalheScreen extends JFrame {
 
         var listaTelefones = contato.getListaTelefones();
         for (Telefone telefone : listaTelefones){
-            model.addRow(new Object[]{telefone.getDescricao(), telefone.getDdd(), telefone.getNumero()});
+            model.addRow(new Object[]{ telefone.getDdd(), telefone.getNumero(), telefone.getDescricao()});
         }
     }
 }

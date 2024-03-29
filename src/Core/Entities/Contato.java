@@ -13,28 +13,22 @@ public abstract class Contato {
         this.codigo = codigo;
         this.nome = nome;
     }
-
     public abstract String getDocumentoDeCadastro();
-
     public long getCodigo(){
         return codigo;
     }
-
     public String getNome(){
         return nome;
     }
-
     public Endereco getEndereco(){
         return endereco;
     }
-
     public void setEndereco(Endereco endereco){
         this.endereco = endereco;
     }
     public List<Telefone> getListaTelefones(){
         return listaTelefones;
     }
-
     public Telefone getTelefoneFromList(String telefone){
             for (Telefone telefoneAtual : getListaTelefones()) {
                 if (telefoneAtual.getNumero().equals(telefone)) {
