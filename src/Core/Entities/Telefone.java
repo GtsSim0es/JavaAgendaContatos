@@ -11,7 +11,6 @@ public class Telefone {
         this.descricao = descricao;
     }
 
-    // Getters e Setters
     public String getDdd() {
         return ddd;
     }

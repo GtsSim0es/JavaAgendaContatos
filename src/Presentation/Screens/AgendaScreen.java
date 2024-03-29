@@ -1,7 +1,8 @@
 package Presentation.Screens;
 
 import Core.Entities.Contato;
-import Core.Entities.Endereco;
+import Core.Entities.PessoaFisica;
+import Core.Entities.PessoaJuridica;
 import Core.Services.AgendaService;
 
 import javax.swing.*;
@@ -14,6 +15,8 @@ public class AgendaScreen extends JFrame {
     private DefaultTableModel model;
     private JTextField codigoField;
     private JTextField nomeField;
+    private JTextField documentoDeCadastro;
+    private JComboBox<String> tipoPessoaComboBox;
     private AgendaService agendaService;
 
     public AgendaScreen() {
@@ -40,15 +43,17 @@ public class AgendaScreen extends JFrame {
 
         model.addColumn("Codigo");
         model.addColumn("Nome");
+        model.addColumn("Documento De Cadastro");
 
         tabela = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(tabela);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
     }
     private void definirConfiguracoesDeMenu(){
-        JPanel botoesPanel = new JPanel();
+        JPanel botoesPanel = new JPanel(new GridLayout(6, 2, 5, 5));
         codigoField = new JTextField(15);
         nomeField = new JTextField(15);
+        documentoDeCadastro = new JTextField(15);
         JButton adicionarButton = new JButton("Adicionar");
         JButton excluirButton = new JButton("Excluir");
         JButton verContatoButton = new JButton("Ver Contato");
@@ -56,6 +61,13 @@ public class AgendaScreen extends JFrame {
         adicionarButton.addActionListener(this::adicionarLinha);
         excluirButton.addActionListener(this::excluirLinha);
         verContatoButton.addActionListener(this::verContato);
+
+        botoesPanel.add(new JLabel("Tipo de Pessoa:"));
+        tipoPessoaComboBox = new JComboBox<>(new String[]{"Pessoa Física", "Pessoa Jurídica"});
+        botoesPanel.add(tipoPessoaComboBox);
+
+        botoesPanel.add(new JLabel("Documento de Cadastro (CPF/CNPJ):"));
+        botoesPanel.add(documentoDeCadastro);
 
         botoesPanel.add(new JLabel("Codigo:"));
         botoesPanel.add(codigoField);
@@ -69,14 +81,20 @@ public class AgendaScreen extends JFrame {
 
         getContentPane().add(botoesPanel, BorderLayout.SOUTH);
     }
-
     private void adicionarLinha(ActionEvent e) {
         try {
             long codigo = Long.parseLong(codigoField.getText());
             String nome = nomeField.getText();
+            String documento = documentoDeCadastro.getText();
 
             if (!nome.isEmpty() && codigo != 0) {
-                Contato novoContato = new Contato(codigo, nome, new Endereco());
+                Contato novoContato = null;
+
+                if("Pessoa Física".equals(tipoPessoaComboBox.getSelectedItem()))
+                    novoContato = new PessoaFisica(codigo, nome, documento);
+                else
+                    novoContato = new PessoaJuridica(codigo, nome, documento);
+
                 agendaService.CriarContato(novoContato);
             } else {
                 JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
@@ -84,7 +102,6 @@ public class AgendaScreen extends JFrame {
 
             preencherOuAtualizarTabela();
         } catch (NumberFormatException ex) {
-            // Exibe um diálogo de erro informando que o campo "codigo" só pode conter números.
             JOptionPane.showMessageDialog(this, "O campo \"Código\" só pode conter números.");
         }
     }
@@ -119,14 +136,9 @@ public class AgendaScreen extends JFrame {
         var contatosLista = agendaService.BuscarListaContatosAgenda();
 
         for (Contato contato : contatosLista){
-            model.addRow(new Object[]{contato.getCodigo(), contato.getNome()});
+            model.addRow(new Object[]{contato.getCodigo(), contato.getNome(), contato.getDocumentoDeCadastro()});
         }
     }
-
-
-
-
-
 }
 
 

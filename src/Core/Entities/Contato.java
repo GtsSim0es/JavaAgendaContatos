@@ -3,17 +3,18 @@ package Core.Entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Contato {
+public abstract class Contato {
     private final long codigo;
     private final String nome;
     private List<Telefone> listaTelefones = new ArrayList<>();
-    private final Endereco endereco;;
+    private Endereco endereco = new Endereco("",0,"", "", "", "");;
 
-    public Contato(long codigo, String nome, Endereco endereco) {
+    public Contato(long codigo, String nome) {
         this.codigo = codigo;
         this.nome = nome;
-        this.endereco = endereco;
     }
+
+    public abstract String getDocumentoDeCadastro();
 
     public long getCodigo(){
         return codigo;
@@ -27,7 +28,20 @@ public class Contato {
         return endereco;
     }
 
+    public void setEndereco(Endereco endereco){
+        this.endereco = endereco;
+    }
     public List<Telefone> getListaTelefones(){
         return listaTelefones;
+    }
+
+    public Telefone getTelefoneFromList(String telefone){
+            for (Telefone telefoneAtual : getListaTelefones()) {
+                if (telefoneAtual.getNumero().equals(telefone)) {
+                    return telefoneAtual;
+                }
+            }
+
+            return null;
     }
 }

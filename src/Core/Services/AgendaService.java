@@ -8,27 +8,18 @@ import java.util.List;
 
 public class AgendaService {
     private List<Contato> listaDeContatos = new ArrayList<>();
-
     public void CriarContato(Contato novoContato){
+        for (Contato contato : listaDeContatos) {
+            if (contato.getCodigo() == novoContato.getCodigo()) {
+                return;
+            }
+        }
+
         listaDeContatos.add(novoContato);
     }
 
     public void ExcluirContato(Contato contatoParaExcluir){
         listaDeContatos.remove(contatoParaExcluir);
-    }
-
-    public void AdicionarTelefoneAoContato(long codigoContato, Telefone telefone){
-        Contato contato = ConsultarContato(codigoContato);
-        if (contato != null) {
-            contato.getListaTelefones().add(telefone);
-        }
-    }
-
-    public void ExcluirTelefoneAoContato(long codigoContato, Telefone telefone){
-        Contato contato = ConsultarContato(codigoContato);
-        if (contato != null) {
-            contato.getListaTelefones().remove(telefone);
-        }
     }
 
     public Contato ConsultarContato(long codigo){
